@@ -18,19 +18,22 @@ res = res[0,0][0,0]
 # print '{}'.format(res)
 img = matvars['img']
 img = img[0,0]
-xstart=430
+xstart=420
 xstop=500
+ystart=550
+ystop=700
 step=2
 xrange = slice(xstart,xstop)
-yrange = slice(xstop,700)
-fig=plt.figure()
+yrange = slice(ystart,ystop)
+# fig=plt.figure()
+fig=mt.figure('To process')
 plt.imshow(img[xrange,yrange])
 
 # These need to be fixed someday...
 qs1_k_half = 3.077225846087095e-01;
 qs2_k_half = -2.337527121004531e-01;
 
-addpath('E200_Cam_Energy_Cal');
+# addpath('E200_Cam_Energy_Cal');
 
 # Check number of points and initialize arrays
 num_pts=(xstop-xstart)/step
@@ -71,8 +74,16 @@ for i,val in enumerate(mt.linspacestep(xstart,xstop-step,step)):
 	# stddev[i]   = np.sqrt(pcov[2,2])
 
 mt.figure('Varplot')
-plt.plot(variance)
+# plt.plot(variance)
 
+xvar=np.shape(mt.linspacestep(xstart,xstop,step))[0]-1
+xvar=mt.linspacestep(1,xvar)
+
+out=np.polyfit(xvar,variance,2)
+
+plt.plot(xvar,variance,'.-',xvar,np.polyval(out,xvar))
+
+print 'Minimum at {}'.format(-out[1]/(2*out[0]))
 
 	# for i,el in enumerate(sum_x):
 	#         y                   = sum_x[i,:]

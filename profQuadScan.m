@@ -5,12 +5,24 @@ CEGAIN = data.raw.images.CEGAIN;
 
 step6uid = E200_api_getUID(data.raw.scalars.step_num,6);
 wantedUID = intersect(step6uid,CEGAIN.UID);
-img = E200_load_images(CEGAIN,wantedUID(17));
+% img = E200_load_images(CEGAIN,wantedUID(17));
+img = E200_load_images(CEGAIN,wantedUID);
+
+numimg=length(img);
+imgsum=double(img{2}) / (numimg-1);
+for i=3:numimg
+	imgsum=imgsum + double(img{i}) / (numimg-1);
+end
+img={imgsum};
 
 % Get yvec for energy
 [ysize,xsize] = size(img);
 yvec = 1:ysize;
 res = 10.3934;
+
+curpath=pwd();
+addpath(fullfile(curpath,'E200_Cam_Energy_Cal'));
+
 e_axis = E200_cam_E_cal(data,yvec,res);
 e_axis = fliplr(e_axis);
 	
