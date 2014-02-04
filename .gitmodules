@@ -1,0 +1,6 @@
+[submodule "ButterflyEmittancePython"]
+	path = ButterflyEmittancePython
+	url = git@github.com:joelfrederico/ButterflyEmittancePython.git
+[submodule "E200_Cam_Energy_Cal"]
+	path = E200_Cam_Energy_Cal
+	url = git@github.com:joelfrederico/E200_Cam_Energy_Cal.git
