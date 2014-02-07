@@ -17,7 +17,7 @@ res = transfer['res']
 res = res[0,0][0,0]
 # print '{}'.format(res)
 img = matvars['img']
-img = img[0,0]
+img = img[0]
 xstart=420
 xstop=500
 ystart=550
@@ -27,7 +27,8 @@ xrange = slice(xstart,xstop)
 yrange = slice(ystart,ystop)
 # fig=plt.figure()
 fig=mt.figure('To process')
-plt.imshow(img[xrange,yrange])
+a=img[5]
+plt.imshow(a[xrange,yrange])
 
 # These need to be fixed someday...
 qs1_k_half = 3.077225846087095e-01;
@@ -50,7 +51,7 @@ for i,val in enumerate(mt.linspacestep(xstart,xstop-step,step)):
 	print i
 	# Take a strip of the image
 	# strip = img[slice(475,480),yrange]
-	strip = img[slice(val,val+step),yrange]
+	strip = a[slice(val,val+step),yrange]
 	# fig=mt.figure('Strip')
 	# plt.imshow(strip)
 	
@@ -82,6 +83,8 @@ xvar=mt.linspacestep(1,xvar)
 out=np.polyfit(xvar,variance,2)
 
 plt.plot(xvar,variance,'.-',xvar,np.polyval(out,xvar))
+
+# Central energy is at 18.
 
 print 'Minimum at {}'.format(-out[1]/(2*out[0]))
 
