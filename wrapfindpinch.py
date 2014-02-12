@@ -27,3 +27,5 @@ ystop=700
 step=2
 
 mt.findpinch(img6,[xstart,xstop],[ystart,ystop],step=2)
+
+# plt.show()
