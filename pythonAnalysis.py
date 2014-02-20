@@ -11,7 +11,9 @@ import h5py as h5
 import setQS
 plt.close('all')
 
+# ======================================
 # Load and transfer matlab variables
+# ======================================
 infile     = 'tempfiles/forpython.mat'
 f          = h5.File(infile);
 data       = f['data']
@@ -29,7 +31,10 @@ step   = 2
 x_range = slice(xstart,xstop)
 y_range = slice(ystart,ystop)
 
-# Check number of points and initialize arrays
+# ======================================
+# Check number of points
+# and initialize arrays
+# ======================================
 num_pts=(xstop-xstart)/step
 sigs=np.zeros(num_pts)
 
@@ -47,7 +52,9 @@ stepvalues = stepvalues[stepstart:stepend]
 # print varerr.shape
 chisq_red = np.zeros(numsteps)
 
+# ======================================
 # Find spot size for each step
+# ======================================
 mt.figure('Shot')
 for i,img in enumerate(imgs):
 	img=np.flipud(np.rot90(f[img[0]]))
@@ -63,25 +70,30 @@ for i,img in enumerate(imgs):
 
 	print 'QS1 K1: {}\tQS2 K1: {}'.format(LGPS_3261[i],LGPS_3311[i])
 
+# ======================================
+# Debugging code
+# ======================================
 # img=imgs[3];
 # img=np.flipud(np.rot90(f[img[0]]))
 # plt.imshow(img,interpolation='none')
 # mt.figure('Std. Dev.')
 # plt.plot(stepvalues,np.sqrt(variance),'.-')
 
+# ======================================
 # Set up initial conditions
+# ======================================
+B5D36_en = 20.35
+gamma    = (B5D36_en/0.5109989)*1e3
+emitx    = 0.000100
+twiss    = sltr.Twiss(
+		beta  = 0.5,
+		alpha = 0
+		)
 
-# Gauss fit
-B5D36_en  = 20.35
-gamma     = (B5D36_en/0.5109989)*1e3
-
-emitx  = 0.000100
-
-twiss = sltr.Twiss(beta=0.5,
-		   alpha=0
-		   )
+# ======================================
+# Create beamlines
+# ======================================
 beamline=bt.beamlines.IP_to_lanex(twiss_x=twiss,twiss_y=twiss,gamma=gamma)
-
 beamline_array = np.array([])
 for i,beam in enumerate(stepvalues):
 	beamline.elements[1].K1 = LGPS_3261[i]
@@ -90,17 +102,25 @@ for i,beam in enumerate(stepvalues):
 	beamline.elements[5].K1 = LGPS_3311[i]
 	beamline_array = np.append(beamline_array,copy.deepcopy(beamline))
 
-# Fit bowtie plot
+# ======================================
+# Fudge error
+# ======================================
 chisq_factor = 1e-28
 # used_error   = stddev*np.sqrt(chisq_factor)
 used_error   = variance*np.sqrt(chisq_factor)
 
+# ======================================
+# Fit beamline scan
+# ======================================
 out = bt.fitBeamlineScan(beamline_array,
 		variance,
 		emitx,
 		error=used_error,
 		verbose=True)
 
+# ======================================
+# Plot results
+# ======================================
 bt.plotfit(stepvalues/20.35,
 		variance,
 		out.beta,
