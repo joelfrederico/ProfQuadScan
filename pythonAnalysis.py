@@ -22,6 +22,9 @@ stepvalues = data['raw']['scalars']['step_value']['dat']
 stepvalues = mt.derefdataset(stepvalues,f)
 stepvalues = np.unique(stepvalues)
 
+# ======================================
+# Set up image slices
+# ======================================
 res    = 10.3934
 xstart = 455
 xstop  = 457
