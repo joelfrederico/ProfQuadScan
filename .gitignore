@@ -1,4 +1,10 @@
 *.swp
 *~
 *.pyc
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.html
 
