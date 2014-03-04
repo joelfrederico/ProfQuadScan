@@ -1,14 +1,26 @@
 #!/usr/bin/env python
+
+# System imports
+import pdb
 import argparse
-import numpy as np
-import scipy.io as sio
-import ButterflyEmittancePython as bt
-import mytools.slactrac as sltr
-import matplotlib.pyplot as plt
-import mytools as mt
 import copy
 import h5py as h5
+
+# Math/science imports
+import numpy as np
+import scipy.io as sio
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib.gridspec as gs
+import matplotlib as mpl
+mpl.rcParams.update({'font.size':7})
+
+# My module imports
+import ButterflyEmittancePython as bt
+import mytools.slactrac as sltr
+import mytools as mt
 import setQS
+
 plt.close('all')
 
 # ======================================
@@ -25,22 +37,17 @@ stepvalues = np.unique(stepvalues)
 # ======================================
 # Set up image slices
 # ======================================
-res    = 10.3934
+res_y    = 10.3934e-6
+res_x    = res_y / np.sqrt(2)
 xstart = 455
 xstop  = 457
 ystart = 550
 ystop  = 700
-step   = 2
-x_range = slice(xstart,xstop)
-y_range = slice(ystart,ystop)
 
 # ======================================
 # Check number of points
 # and initialize arrays
 # ======================================
-num_pts=(xstop-xstart)/step
-sigs=np.zeros(num_pts)
-
 # Choose step range to perform analysis on
 stepstart  = 2
 stepend    = 8
@@ -56,15 +63,37 @@ stepvalues = stepvalues[stepstart:stepend]
 chisq_red = np.zeros(numsteps)
 
 # ======================================
+# Set up PDF
+# ======================================
+# Create PDF
+pp = PdfPages('output.pdf')
+# Create figure
+fig=mt.figure('Page 1',figsize=(8.5,11))
+# Create larger gridspec
+outergs= gs.GridSpec(4,2)
+# pdb.set_trace()
+# ======================================
 # Find spot size for each step
 # ======================================
-mt.figure('Shot')
+# mt.figure('Shot')
 for i,img in enumerate(imgs):
+	# img=np.flipud(np.rot90(f[img[0]],3))
 	img=np.flipud(np.rot90(f[img[0]]))
-	# plt.imshow(img,interpolation='none')
+	ax=fig.add_subplot(outergs[i])
+	ax.imshow(img,interpolation='none')
+	fig.add_subplot(ax)
+	outergs.tight_layout(fig)
+	# plt.show()
 
 	# Fit individual slices
-	popt,pcov,chisq_red[i] = mt.fitimageslice(img,res/1e6,x_range,y_range)
+	popt,pcov,chisq_red[i] = mt.fitimageslice(
+			img,
+			res_x,
+			res_y,
+			(ystart,ystop),
+			(xstart,xstop),
+			plot=True
+			)
 	
 	variance[i] = popt[2]
 	bact = setQS.set_QS_energy_ELANEX(stepvalues[i])
