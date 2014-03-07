@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gs
 import matplotlib as mpl
-mpl.rcParams.update({'font.size':7})
+# mpl.rcParams.update({'font.size':7})
 
 # My module imports
 import ButterflyEmittancePython as bt
@@ -119,9 +119,10 @@ fig2=mt.plot_featured(stepvalues,ymin,'.-',stepvalues,np.polyval(out,stepvalues/
 		ylabel = 'Energy offset [GeV]',
 		legend= ('Data','Fit')
 		)
+plt.tight_layout()
 # mt.addlabel('Dispersion Fit
 
-pp.savefig(fig)
+# pp.savefig(fig)
 pp.savefig(fig2)
 pp.close()
 

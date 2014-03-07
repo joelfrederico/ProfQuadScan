@@ -20,12 +20,12 @@ img6=f[imgs[5,0]]
 img6=np.flipud(np.rot90(img6))
 plt.imshow(img6)
 
-xstart=420
-xstop=500
-ystart=550
-ystop=700
+ystart=420
+ystop=500
+xstart=550
+xstop=700
 step=2
 
 mt.findpinch(img6,[xstart,xstop],[ystart,ystop],step=2)
 
-# plt.show()
+plt.show()

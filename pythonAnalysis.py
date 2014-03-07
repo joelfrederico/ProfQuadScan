@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gs
 import matplotlib as mpl
-mpl.rcParams.update({'font.size':7})
+mpl.rcParams.update({'font.size':9})
 
 # My module imports
 import ButterflyEmittancePython as bt
@@ -39,10 +39,10 @@ stepvalues = np.unique(stepvalues)
 # ======================================
 res_y    = 10.3934e-6
 res_x    = res_y / np.sqrt(2)
-xstart = 455
-xstop  = 457
-ystart = 550
-ystop  = 700
+xstart = 550
+xstop  = 700
+ystart = 455
+ystop  = 457
 
 # ======================================
 # Check number of points
@@ -70,7 +70,7 @@ pp = PdfPages('output.pdf')
 # Create figure
 fig=mt.figure('Page 1',figsize=(8.5,11))
 # Create larger gridspec
-outergs= gs.GridSpec(4,2)
+outergs= gs.GridSpec(3,2)
 # pdb.set_trace()
 # ======================================
 # Find spot size for each step
@@ -80,9 +80,11 @@ for i,img in enumerate(imgs):
 	# img=np.flipud(np.rot90(f[img[0]],3))
 	img=np.flipud(np.rot90(f[img[0]]))
 	ax=fig.add_subplot(outergs[i])
-	ax.imshow(img,interpolation='none')
+	ax.imshow(img[350:600,xstart:xstop],aspect='auto',interpolation='none')
 	fig.add_subplot(ax)
-	outergs.tight_layout(fig)
+	plt.figure(fig.number)
+	outergs.tight_layout(fig,pad=5)
+	mt.addlabel(toplabel='$\Delta E$={}GeV'.format(stepvalues[i]),xlabel='x [px]',ylabel='y [px]')
 	# plt.show()
 
 	# Fit individual slices
@@ -90,10 +92,11 @@ for i,img in enumerate(imgs):
 			img,
 			res_x,
 			res_y,
-			(ystart,ystop),
 			(xstart,xstop),
+			(ystart,ystop),
 			plot=True
 			)
+	mt.addlabel(toplabel='Gaussian Fit to Spot Profile, $\Delta E$={}GeV'.format(stepvalues[i]),xlabel='x [m]',ylabel='Counts')
 	
 	variance[i] = popt[2]
 	bact = setQS.set_QS_energy_ELANEX(stepvalues[i])
@@ -101,6 +104,9 @@ for i,img in enumerate(imgs):
 	LGPS_3311[i] = setQS.bdes2K1(bact[1],20.35)
 
 	print 'QS1 K1: {}\tQS2 K1: {}'.format(LGPS_3261[i],LGPS_3311[i])
+
+pp.savefig(fig)
+pp.close()
 
 # ======================================
 # Debugging code
@@ -153,13 +159,15 @@ out = bt.fitBeamlineScan(beamline_array,
 # ======================================
 # Plot results
 # ======================================
+mpl.rcParams.update({'font.size':12})
 bt.plotfit(stepvalues/20.35,
 		variance,
 		out.beta,
 		out.X_unweighted,
-		top='Data is real!',
-		figlabel='Comparison',
+		top='Emittance/Twiss Fit to Quad Scan',
+		figlabel='Quad Scan Fit',
 		error=used_error)
+mt.addlabel(xlabel='$\delta$')
 
 # figchisquare = plt.figure()
 # mt.plot_featured(stepvalues,chisq_red,'.-',
@@ -167,4 +175,4 @@ bt.plotfit(stepvalues/20.35,
 #                 xlabel='$E/E_0$',
 #                 ylabel='$\chi^2$')
 
-plt.show()
+# plt.show()
